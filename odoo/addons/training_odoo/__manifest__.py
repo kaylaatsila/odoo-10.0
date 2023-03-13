@@ -17,7 +17,7 @@
 
     'author': "Kayla",
     'website': "http://www.tutorialopenerp.wordpress.com",
-    
+
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/odoo/addons/base/module/module_data.xml
     # for the full list
@@ -29,16 +29,17 @@
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
-				'views/partner.xml',
+        'views/partner.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
-		'installable': True,
+    'installable': True,
     'application': True,
     'auto_install': False,
 }
