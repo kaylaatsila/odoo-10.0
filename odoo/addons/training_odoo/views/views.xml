@@ -98,9 +98,11 @@
 					<field name="name"/>
 					<field name="responsible_id"/>
 					<field name="description"/>
+					<field name="state"/>
 				</tree>
 			</field>
 		</record>
+
 
 
 		<!-- ### Membuat Tampilan Form ### -->
@@ -109,18 +111,22 @@
 			<field name="model">training.kursus</field>
 			<field name="arch" type="xml">
 				<form string="Kursus Form">
+					<header>
+						<button name="action_confirm" type="object" string="Confirm" states="draft" class="btn-primary"/>
+						<button name="action_cancel" type="object" string="Cancel" states="open"/>
+						<button name="action_close" type="object" string="Close" states="open" class="btn-primary"/>
+						<button name="%(cetak_kursus)d" type="action" states="done" string="Report RML"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,open,done"/>
+					</header>
 					<sheet>
 						<group>
 							<field name="name"/>
 							<field name="responsible_id"/>
 						</group>
 						<notebook>
-							<page string="Keterangan">
-								<field name="description"/>
-							</page>
 							<page string="Sesi">
 								<field name="session_ids">
-									<tree string="Daftar Sesi">
+									<tree string="Daftar Sesi" editable="bottom">
 										<field name="name"/>
 										<field name="instructor_id"/>
 									</tree>
@@ -137,8 +143,15 @@
 									</form>
 								</field>
 							</page>
+							<page string="Keterangan">
+								<field name="description"/>
+							</page>
 						</notebook>
 					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
 				</form>
 			</field>
 		</record>
@@ -159,7 +172,7 @@
 			<field name="name">training.sesi.tree</field>
 			<field name="model">training.sesi</field>
 			<field name="arch" type="xml">
-				<tree string="Sesi List" decoration-info="duration&lt;5" decoration-danger="duration&gt;15">
+				<tree string="Sesi List" decoration-info="duration&lt;5" decoration-danger="duration&gt;10">
 					<field name="name"/>
 					<field name="course_id"/>
 					<field name="start_date"/>
@@ -173,33 +186,36 @@
 		</record>
 
 		<!-- ### Membuat Tampilan Form Sesi ### -->
-		<record model="ir.ui.view" id="sesi_form_view">
-			<field name="name">training.sesi.form</field>
-			<field name="model">training.sesi</field>
-			<field name="arch" type="xml">
-				<form string="Sesi Form">
-					<sheet>
-						<group>
-							<group string="Informasi">
-								<field name="course_id"/>
-								<field name="name"/>
-								<field name="end_date"/>
-								<field name="instructor_id"/>
-							</group>
-							<group string="Jadwal">
-								<field name="start_date"/>
-								<field name="duration"/>
-								<field name="seats"/>
-								<field name="taken_seats" widget="progressbar"/>
-							</group>
-							<group string="Peserta" colspan="2">
-								<field name="attendee_ids" nolabel="1"/>
-							</group>
-						</group>
-					</sheet>
-				</form>
-			</field>
-		</record>
+<record model="ir.ui.view" id="sesi_form_view">
+    <field name="name">training.sesi.form</field>
+    <field name="model">training.sesi</field>
+    <field name="arch" type="xml">
+        <form string="Sesi Form">
+            <header>
+                <button name="cetak_sesi" string="Report QWEB" type="object" class="btn-primary"/>
+            </header>
+            <sheet>
+                <group>
+                    <group string="Informasi">
+                        <field name="course_id"/>
+                        <field name="name"/>
+                        <field name="instructor_id"/>
+                        <field name="seats"/>                         
+                    </group>
+                    <group string="Jadwal">
+                        <field name="start_date"/>
+                        <field name="duration"/>
+                        <field name="end_date"/>
+                        <field name="taken_seats" widget="progressbar"/>                          
+                    </group>
+                    <group string="Peserta" colspan="2">
+                        <field name="attendee_ids" nolabel="1"/>
+                    </group>                      
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
 
 		<!-- ### Membuat Tampilan Calendar Sesi ### -->
 		<record model="ir.ui.view" id="sesi_calendar_view">

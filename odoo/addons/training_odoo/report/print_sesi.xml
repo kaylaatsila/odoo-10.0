@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+	<template id="laporan_sesi">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<t t-call="report.external_layout">
+					<div class="page">
+
+						<!-- JUDUL REPORT-->
+
+						<h2 class="text-center">REPORT SESI</h2>
+
+						<!-- INFORMASI HEADER -->
+
+						<table class="table">
+							<tr>
+								<td>
+									<strong>Nama</strong>
+								</td>
+								<td>
+									<span t-field="o.name"/>
+								</td>
+								<td>
+									<strong>Instruktur</strong>
+								</td>
+								<td>
+									<span t-field="o.instructor_id.name"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<strong>Tanggal Mulai</strong>
+								</td>
+								<td>
+									<span t-field="o.start_date"/>
+								</td>
+								<td>
+									<strong>Tanggal Akhir</strong>
+								</td>
+								<td>
+									<span t-field="o.end_date"/>
+								</td>
+							</tr>
+						</table>
+
+
+
+						<table class="table table-bordered" style="table-layout:auto">
+							<thead>
+								<tr>
+									<th class="text-center">Name</th>
+									<th class="text-center">Phone</th>
+									<th class="text-center">Email</th>
+								</tr>
+							</thead>
+							<tbody>
+								<t t-foreach="o.attendee_ids" t-as="l">
+									<tr>
+										<td>
+											<span t-field="l.name"/>
+										</td>
+										<td>
+											<span t-field="l.phone"/>
+										</td>
+										<td>
+											<span t-field="l.email"/>
+										</td>
+									</tr>
+								</t>
+							</tbody>
+						</table>
+
+					</div>
+				</t>
+			</t>
+		</t>
+	</template>
+
+</odoo>

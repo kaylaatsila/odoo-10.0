@@ -25,15 +25,19 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base', 'mail'],
 
     # always loaded
     'data': [
+        'report/report_view.xml',
+        'report/print_sesi.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
         'views/partner.xml',
+        'wizard/wizard_view.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [

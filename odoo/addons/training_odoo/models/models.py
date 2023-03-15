@@ -18,12 +18,22 @@ from datetime import timedelta
 
 class Kursus(models.Model):
     _name = 'training.kursus'
+    _inherit = 'mail.thread'
 
-    name = fields.Char(string="Judul", required=True)
-    description = fields.Text()
-    session_ids = fields.One2many('training.sesi', 'course_id', string="Sesi")
-    responsible_id = fields.Many2one(
-        'res.users', ondelete='set null', string="Penanggung Jawab", index=True)
+    name = fields.Char(string="Judul", required=True, readonly=True, states={
+                       'draft': [('readonly', False)]})
+    description = fields.Text(readonly=True, states={
+                              'draft': [('readonly', False)]})
+    session_ids = fields.One2many('training.sesi', 'course_id', string="Sesi", readonly=True, states={
+                                  'draft': [('readonly', False)]})
+    responsible_id = fields.Many2one('res.users', ondelete='set null', string="Penanggung Jawab",
+                                     index=True, readonly=True, states={'draft': [('readonly', False)]})
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('open', 'Open'),
+        ('done', 'Done'),
+    ], string='Status', readonly=True, copy=False, default='draft', track_visibility='onchange')
+
     attendee_ids = fields.Many2many('res.partner', string="Peserta")
 
     _sql_constraints = [
@@ -50,6 +60,24 @@ class Kursus(models.Model):
         default['name'] = new_name
         return super(Kursus, self).copy(default)
 
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('open', 'Open'),
+        ('done', 'Done'),
+    ], string='Status', readonly=True, copy=False, default='draft')
+
+    @api.multi
+    def action_confirm(self):
+        self.write({'state': 'open'})
+
+    @api.multi
+    def action_cancel(self):
+        self.write({'state': 'draft'})
+
+    @api.multi
+    def action_close(self):
+        self.write({'state': 'done'})
+
 
 class Sesi(models.Model):
     _name = 'training.sesi'
@@ -69,14 +97,15 @@ class Sesi(models.Model):
 
     taken_seats = fields.Float(string="Kursi Terisi", compute='_taken_seats')
 
-    attendees_count = fields.Integer(string="Jumlah Peserta", compute='_get_attendees_count', store=True)
-  
+    attendees_count = fields.Integer(
+        string="Jumlah Peserta", compute='_get_attendees_count', store=True)
+
     @api.depends('attendee_ids')
     def _get_attendees_count(self):
         for r in self:
-            # Mengupdate field attendees_count berdasarkan jumlah record di tabel peserta 
+            # Mengupdate field attendees_count berdasarkan jumlah record di tabel peserta
             r.attendees_count = len(r.attendee_ids)
-            
+
     @api.depends('seats', 'attendee_ids')
     def _taken_seats(self):
         for r in self:
@@ -149,3 +178,7 @@ class Sesi(models.Model):
 
             # Mengupdate field duration (jika ada perubahan dari field end_date) dari perhitungan variabel end_date dikurangi variabel start_date (ditambah 1 hari agar end_date termasuk durasi hari)
             r.duration = (end_date - start_date).days + 1
+
+    @api.multi
+    def cetak_sesi(self):
+        return self.env['report'].get_action(self, 'training_odoo.laporan_sesi')

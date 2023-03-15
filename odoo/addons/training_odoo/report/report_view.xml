@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<report id="cetak_kursus" string="Report RML" model="training.kursus" name="laporan.kursus" rml="training_odoo/report/print_kursus.rml" auto="False" menu="False"/>
+
+		<report id="cetak_sesi" string="Report QWEB" model="training.sesi" report_type="qweb-pdf" file="training_odoo.laporan_sesi" name="training_odoo.laporan_sesi" />
+	
+	</data>
+</odoo>
